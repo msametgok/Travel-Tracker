@@ -34,6 +34,18 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.post('/add', async (req, res) => {
+  try {
+    const country = req.body.country;
+    const result = await pool.query(`SELECT country_code FROM countries WHERE country_name = '${country}'`)
+    await pool.query(`INSERT INTO visited_countries (country_code) VALUES ('${result.rows[0].country_code}')`)
+    res.redirect('/')
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+})
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
